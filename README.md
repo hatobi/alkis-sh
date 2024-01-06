@@ -83,7 +83,7 @@ Default values:
 ```
 chunk_size = 20
 initial_wait_time = 5
-multiplier = 1.2
+wait_time_multiplier = 1.2
 termination_threshold = 50
 ```
 
