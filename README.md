@@ -1,23 +1,23 @@
 # alkis-sh
-Collection of scripts to get a list of all downloadable ALKIS-files from GDI-SH, download said files in bulk and convert the files to [shapefile](https://en.wikipedia.org/wiki/Shapefile).
+A compilation of scripts for acquiring a complete list of downloadable ALKIS files from GDI-SH, enabling bulk download of these files, and converting them into [shapefile](https://en.wikipedia.org/wiki/Shapefile).
 
 # Introduction
-The German federal state of Schleswig-Holstein offers a free download of their [ALKIS](https://de.wikipedia.org/wiki/Amtliches_Liegenschaftskatasterinformationssystem) data on [their website](https://geodaten.schleswig-holstein.de/gaialight-sh/_apps/dladownload/dl-alkis.html) but unfortunately their download client only allows the download of one _Flur_ (containing multiple _Flurstücke_) at a time.
+The German federal state of Schleswig-Holstein offers a free download of their [ALKIS](https://de.wikipedia.org/wiki/Amtliches_Liegenschaftskatasterinformationssystem) data on [their website](https://geodaten.schleswig-holstein.de/gaialight-sh/_apps/dladownload/dl-alkis.html). Unfortunately, the interactive download client only allows the download of one _Flur_ (containing multiple _Flurstücke_) at a time.
 
-I needed all ALKIS-Files for one city in Schleswig-Holstein and didn't want to download them seperately. When looking at the download client, it becomes clear that a download is always a three step process:
-1. Send download request with Flur-ID to URL
-2. Server creates archive, assigns a download-ID, browser checks for sucess every 5 seconds
-3. Archive is ready, response is "success" and file is ready for download for one hour
+Needing all ALKIS files for a specific city in Schleswig-Holstein and wanting to avoid individual downloads, I examined the download process, which always involves three steps:
+1. Send a download request with the _Flur_'s unique ID and a second `ogc_fid` to a specific URL
+2. The server then generates an archive, assigns a download ID, while the browser checks for sucess every 5 seconds
+3. Once ready, the archive is downloadable at a new download-URL for one hour upon receiving a "success" response
 
 Here's an example of such a request-URL: ```https://geodaten.schleswig-holstein.de/gaialight-sh/_apps/dladownload/_ajax/details.php?gemarkung=Stafstedt&flur=010402001&a_datum=2023-11-06&a_datum_dmy=06.11.2023&quartal=11_2023&gemeinde=Stafstedt&ogc_fid=8228&type=alkis&id=8228&_uid=alkis8228```
 
-Most of the data sent with the download request is not necessary for initiating a download of the latest available file, but you need two IDs connected to your desired _Flur_: ```ogc_fid``` and ```flur```. These IDs must be sent with every request and match each other or the request will fail.
+Most data in the download request isn't necessary for initiating the download of the latest file, but two IDs - _Flur_: ```ogc_fid``` and ```flur```– connected to the desired _Flur_ are essential. Mismatched or missing IDs result in failed requests.
 
-As there's no list of these IDs, the first step was to create a database of all IDs - preferably with other information like _Gemarkung_, _Gemeinde_ and date of the last update. That's what script **gather-ids.py** is for. 
+Since no list of these IDs existed, my first task was creating a database containing all IDs and additional information like _Gemarkung_, _Gemeinde_ and date of the last update. The script **gather-ids.py** accomplishes this. 
 
-Then one can sort and filter these IDs by the area actually needed and start a batch-download. That's what script **dl-flur.py** is for. 
+Afterwards, one can filter and sort these IDs as needed and initiate a batch download. This is where the script **dl-flur.py** comes into play. 
 
-I also needed shapefiles in the end so there's a script **convert-to-shape.py** that handles the conversion of NAS-XML (the file format used by German organisations working with geodata) to shape.
+Finally, I needed the data in shapefile format, hence the script **convert-to-shape.py** handles the conversion from NAS-XML (the file format used by German organisations working with geodata) to shapefile.
 
 # Disclaimer
 
