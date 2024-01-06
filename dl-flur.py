@@ -67,8 +67,8 @@ def main():
     initial_wait_time = 5
     wait_time = initial_wait_time
     print(f"Wait time: {wait_time} seconds")
-    multiplier = 1.2
-    print(f"Multiplier: {multiplier}")
+    wait_time_multiplier = 1.2
+    print(f"Wait time Multiplier: {wait_time_multiplier}")
     termination_threshold = 50
     print(f"Terminated after: {termination_threshold} tries")
     chunk_size = 20
@@ -147,7 +147,7 @@ def main():
                         log_and_print(f"Invalid JSON response for ID: {download_id}. Retrying...")
                         log_and_print(f"Response content: {response.content}")  # Log the actual response content
                         time.sleep(wait_time)
-                        wait_time *= multiplier
+                        wait_time *= wait_time_multiplier
                         continue
 
                     if data.get("status") == "done":
@@ -165,7 +165,7 @@ def main():
                         log_and_print(f"Response content: {response.content.decode('utf-8')}")  # Log the actual response content
                         print(f"Waiting {round(wait_time, 2)} seconds before next attempt.")
                         time.sleep(wait_time)
-                        wait_time *= multiplier
+                        wait_time *= wait_time_multiplier
                     else:
                         log_and_print(f"Error for download ID: {download_id}")
                         break                
