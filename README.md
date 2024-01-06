@@ -21,7 +21,7 @@ Finally, I needed the data in shapefile format, hence the script **convert-to-sh
 
 # Disclaimer
 
-All scripts where tested in November 2023 and may no longer work because of changes by GDI-SH to the way their website and server handles the download of ALKIS data. 
+All scripts were tested in November 2023. They may cease to function due to future modifications by GDI-SH in their website and server protocols for downloading ALKIS data.
 
 Please be cautious as improper usage of these scripts can result in putting a huge load on the infrastructure of GDI-SH and your local machine and network. The `dl-flur.py` script includes mechanisms to limit request frequency, and I strongly advise only requesting necessary data.
 
@@ -48,9 +48,9 @@ Python modules/libraries:
 - datetime
 - collections
 
-You ned a list of IDs that you want to download as CSV file. See file `id-sample.csv` for structure or use the latest dump performed with `gather-ids.py`. Alternatively simply run `gather-ids.py` yourself and use the output.
+Requires a CSV file list of IDs for download. Refer to `id-sample.csv` for the format or use the latest data dump made with `gather-ids.py`. Alternatively, you can run `gather-ids.py` yourself.
 
-Depending on the number of downloaded files, you need between a few MBs to a few dozen to 200 GBs of storage. Also, you need an internet connection. Please note, that the download size can exceed the allowance of most mobile data plans.
+Storage needs range from a few MBs to over 200 GBs, depending on the number of files downloaded. An internet connection is necessary. Be aware that the download size could exceed most mobile data plan limits.
 
 ## convert-to-shape.py
 Python modules/libraries:
@@ -60,24 +60,24 @@ Python modules/libraries:
 - subprocess
 - zipfile
 
-You need to have [GDAL](https://gdal.org/api/python_bindings.html) installed in order to use [ogr2ogr](https://gdal.org/programs/ogr2ogr.html). The script will fail if ogr2ogr is not installed.
+Requires [GDAL](https://gdal.org/api/python_bindings.html) installed in order to use [ogr2ogr](https://gdal.org/programs/ogr2ogr.html). The script will run if ogr2ogr is not installed but not output anything.
 
 # Usage
 ## gather-ids.py
-Running the script will create a folder `IDs` containing a txt-file for each ID with the output for that specific ID. This is mainly a backup in case anything goes wrong. The main output is a `responses.csv` file, that contains a data column for every class returned by the website.
+Running the script creates a folder `IDs`, holding a txt-file for each ID with the output for that specific ID. This is mainly a backup in case anything goes wrong. The main output is a `responses.csv` file, that contains a data column for every class returned by the website.
 
 During my tests, I never found files with an ID larger than 18171 so the `range()` is set to that value. In case your script stops due to internet issues or timeouts, please check for the already downloaded IDs and adjust `range(x)` accordingly so that you don't send the same requests all over again.
 
-IDs don't change that often or get added so it may not be necessary to run this script and instead use the export of the latest run in this repo for downloading the files with `dl-flur.py`.
+Given the infrequent changes and additions of IDs, it might be unnecessary to rerun this script. Instead, use the latest export from this repository.
 
 ## dl-flur.py
 Place in same folder as your list with IDs.
 
-I did not find any rate limiting mechanisms in place on side of GDI-SH's server other than the wait time between a request and the file being ready for download. That being said, your are not the only person downloading files which is why I put some rate limiting mechanisms in place that prevent sending too many requests by accident. The default values are set so that you could still download all 18171 files in less than a day while not putting too much strain on the server. **Please be considerate**!
+I did not find any rate limiting mechanisms in place on side of GDI-SH's server other than the wait time between a request and the file being ready for download. That being said, your are not the only person downloading files which is why I put some rate limiting mechanisms in place that prevent sending too many requests by accident. The default settings allow downloading all 18171 files in less than a day without overburdening the server. **Please be considerate**!
 
-In order to not overwhelm the server with too many requests, download requests are sent in chunks of 20. Adjust variable `chunk_size` if needed though you may run into performance issues later when preparing the files for download takes longer than usual.
+To avoid server overload, download requests are sent in batches of 20. Adjust the `chunk_size` if necessary, but be aware of potential performance issues if file preparation takes longer than usual.
 
-When sending a download request, the server needs some time to prepare the file. Usually this takes between 5 to 10 seconds but sometimes there is a longer wait time. The script checks for the status periodically but we don't want to send a check request every other second so the wait time increases by a fixed multipler after each failed check. There is also a termination threshold set after which a download is no longer attempted.
+The server takes time to prepare files, typically 5 to 10 seconds per file, but occasionally longer. The script periodically checks the status, with increasing intervals after each failed check. A termination threshold is set beyond which the script ceases download attempts.
 
 Default values:
 ```
